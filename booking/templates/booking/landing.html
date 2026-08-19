@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CineTicket - Book Movie Tickets</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f8f9fa; color: #333; }
+        header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #dee2e6; padding-bottom: 15px; margin-bottom: 20px; }
+        h1 { margin: 0; color: #e50914; }
+        .nav-links a { margin-left: 15px; text-decoration: none; color: #007bff; font-weight: bold; }
+        .filter-section { background: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .movie-card { background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); padding: 15px; }
+        .movie-card img { width: 100%; height: 300px; object-fit: cover; border-radius: 4px; }
+        .showtime-list { margin-top: 10px; }
+        .showtime-btn { display: inline-block; background: #e50914; color: white; padding: 6px 10px; border-radius: 4px; text-decoration: none; font-size: 12px; margin: 2px; }
+        .showtime-btn:hover { background: #b20710; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🎬 CineTicket</h1>
+        <div class="nav-links">
+            <a href="/admin/">Admin Panel</a>
+            <a href="/api/">API Root</a>
+        </div>
+    </header>
+
+    <div class="filter-section">
+        <form method="GET" action="">
+            <label>Theater: </label>
+            <select name="theater" onchange="this.form.submit()">
+                <option value="">All Theaters</option>
+                {% for t in theaters %}
+                    <option value="{{ t.id }}" {% if selected_theater == t.id %}selected{% endif %}>{{ t.name }} ({{ t.city }})</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <h2>Upcoming Showtimes & Movies</h2>
+    <div class="movie-grid">
+        {% for st in showtimes %}
+            <div class="movie-card">
+                {% if st.movie.poster_url %}
+                    <img src="{{ st.movie.poster_url }}" alt="{{ st.movie.title }}">
+                {% endif %}
+                <h3>{{ st.movie.title }}</h3>
+                <p><strong>{{ st.screen.theater.name }}</strong> - {{ st.screen.name }}</p>
+                <p>🕒 {{ st.start_time|date:"M j, Y, g:i a" }}</p>
+                <p>💵 Base Price: Kes{{ st.base_price }}</p>
+                <div class="showtime-list">
+                    <a href="{% url 'seat_map' st.id %}" class="showtime-btn">Select Seats</a>
+                </div>
+            </div>
+        {% empty %}
+            <p>No upcoming showtimes available right now.</p>
+        {% endfor %}
+    </div>
+<footer>
+    <p>&copy; 2026 CineTicket. All rights reserved.</p>
+<p>Developed by Bright</p>
+<p>Contact: <a href="mailto:besendi@gmail.com">besendi@gmail.com</a></p>
+<p>Phone: 0716211388</p>
+</footer>
+</body>
+</html>

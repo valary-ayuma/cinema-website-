@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .back-link {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .booking-card {
+            background: white;
+            border-radius: 10px;
+            padding: 22px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .booking-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .movie-title {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .booking-id {
+            color: #777;
+            font-size: 13px;
+        }
+
+        .status {
+            padding: 7px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-refunded {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-cancelled {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .booking-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            padding: 15px 0;
+        }
+
+        .detail-label {
+            color: #777;
+            font-size: 13px;
+            margin-bottom: 3px;
+        }
+
+        .detail-value {
+            font-weight: bold;
+        }
+
+        .seats {
+            margin-top: 15px;
+        }
+
+        .seat {
+            display: inline-block;
+            background: #343a40;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 5px;
+            margin: 4px;
+            font-size: 13px;
+        }
+
+        .booking-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+        }
+
+        .total {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            border: none;
+            padding: 11px 18px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .pay-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .pay-btn:hover {
+            background: #218838;
+        }
+
+        
+
+        .ticket-btn {
+            background: #007bff;
+            color: white;
+        }
+
+        .empty {
+            background: white;
+            padding: 50px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        .empty a {
+            display: inline-block;
+            margin-top: 15px;
+            background: #007bff;
+            color: white;
+            padding: 11px 18px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        @media (max-width: 650px) {
+            .booking-header {
+                flex-direction: column;
+            }
+
+            .booking-details {
+                grid-template-columns: 1fr;
+            }
+
+            .booking-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>My Bookings</h1>
+
+        <a href="{% url 'landing_page' %}" class="back-link">
+            ← Back to Movies
+        </a>
+    </div>
+
+
+    {% if bookings %}
+
+        {% for booking in bookings %}
+
+            <div class="booking-card">
+
+                <div class="booking-header">
+
+                    <div>
+                        <div class="movie-title">
+                            {{ booking.showtime.movie.title }}
+                        </div>
+
+                        <div class="booking-id">
+                            Booking #{{ booking.id }}
+                        </div>
+                    </div>
+
+
+                    {% if booking.status == "pending" %}
+
+                        <div class="status status-pending">
+                            🟡 Payment Pending
+                        </div>
+
+                    {% elif booking.status == "confirmed" %}
+
+                        <div class="status status-confirmed">
+                            🟢 Confirmed
+                        </div>
+
+                
+                    {% elif booking.status == "cancelled" %}
+
+                        <div class="status status-cancelled">
+                            ⚫ Cancelled
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <div class="booking-details">
+
+                    <div>
+                        <div class="detail-label">
+                            Theater
+                        </div>
+
+                        <div class="detail-value">
+                            {{ booking.showtime.screen.theater.name }}
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div class="detail-label">
+                            Screen
+                        </div>
+
+                        <div class="detail-value">
+                            {{ booking.showtime.screen.name }}
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div class="detail-label">
+                            Date
+                        </div>
+
+                        <div class="detail-value">
+                            {{ booking.showtime.start_time|date:"M j, Y" }}
+                        </div>
+                    </div>
+
+
+                    <div>
+                        <div class="detail-label">
+                            Time
+                        </div>
+
+                        <div class="detail-value">
+                            {{ booking.showtime.start_time|date:"g:i A" }}
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <div class="seats">
+
+                    <div class="detail-label">
+                        Seats
+                    </div>
+
+                    {% for booking_seat in booking.seats.all %}
+
+                        <span class="seat">
+                            {{ booking_seat.seat.row_label }}{{ booking_seat.seat.number }}
+                        </span>
+
+                    {% endfor %}
+
+                </div>
+
+
+                <div class="booking-footer">
+
+                    <div class="total">
+                        KES {{ booking.total_price|floatformat:2 }}
+                    </div>
+
+
+                    <div class="actions">
+
+                        {% if booking.status == "pending" %}
+
+                            <button
+                                class="btn pay-btn"
+                                onclick="payForBooking('{{ booking.id }}')"
+                                Pay Now
+                            </button>
+                        {% endif %}
+                        
+                        
+                    </div>
+
+                </div>
+
+            </div>
+
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty">
+
+            <h2>No bookings yet</h2>
+
+            <p>
+                You haven't booked any movie tickets yet.
+            </p>
+
+            <a href="{% url 'landing_page' %}">
+                Browse Movies
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+<script>
+
+async function payForBooking(bookingId) {
+
+    const confirmed = confirm(
+        "Proceed with payment for this booking?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const csrftoken = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('csrftoken='))
+            ?.split('=')[1];
+
+        /*
+         * DEVELOPMENT PAYMENT
+         *
+         * For now this calls our ConfirmPaymentView.
+         *
+         * Later we will replace this with the real
+         * payment provider checkout.
+         */
+
+        const response = await fetch(
+            `/api/bookings/${bookingId}/confirm/`,
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken || ''
+                },
+
+                body: JSON.stringify({
+                    provider_ref: `demo_${Date.now()}`
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (response.ok) {
+
+            alert(
+                "Payment successful! Your booking is now confirmed."
+            );
+
+            window.location.reload();
+
+        } else {
+
+            alert(
+                data.detail || "Payment failed."
+            );
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert(
+            "Something went wrong while processing payment."
+        );
+
+    }
+}
+
+
+
+</script>
+
+</body>
+</html>
