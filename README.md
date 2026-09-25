@@ -1,6 +1,6 @@
 # Movie Booking System — Backend
 
-Django + Django REST Framework API for a movie reservation/booking system.
+Django + Django REST Framework API for a movie reservation/booking system, with a database-agnostic setup (SQLite for local development, PostgreSQL-ready for production via an environment variable toggle).
 
 ## Setup
 
@@ -8,13 +8,20 @@ Django + Django REST Framework API for a movie reservation/booking system.
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 
-# Postgres must be running and reachable via the DB_* env vars below,
-# or point them at your own instance.
-export DB_NAME=moviebooking DB_USER=postgres DB_PASSWORD=postgres DB_HOST=localhost
-
 python manage.py migrate
 python manage.py createsuperuser
 python manage.py runserver
+```
+
+By default this runs on **SQLite** (`db.sqlite3`), so the steps above are enough to get started locally with zero extra setup.
+
+### Using PostgreSQL instead
+
+The project is database-agnostic: set `DB_ENGINE=postgresql` plus the connection details below, and Django will use Postgres instead of the SQLite fallback.
+
+```bash
+export DB_ENGINE=postgresql
+export DB_NAME=moviebooking DB_USER=postgres DB_PASSWORD=postgres DB_HOST=localhost DB_PORT=5432
 ```
 
 Admin panel: http://localhost:8000/admin/ — add Theaters, Screens, Seats, Movies, Showtimes here first.
